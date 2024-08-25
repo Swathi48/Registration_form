@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Registration</title>
+    <!-- Link to Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Reset margin and padding */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to right, #f09ce9, #baa6bc);
+        }
+
+        .registration-container {
+            width: 400px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .registration-container h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: #007bff;
+        }
+
+        .password-group {
+            position: relative;
+        }
+
+        .password-group i {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #888;
+        }
+
+        .error-message {
+            color: #ff4d4d;
+            font-size: 14px;
+            display: none;
+            margin-top: 5px;
+        }
+
+        .submit-group {
+            margin-top: 20px;
+        }
+
+        .submit-group button {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            background-color: #cf1ecc;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .submit-group button.enabled {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .submit-group button:hover.enabled {
+            background-color: #218838;
+        }
+
+        @media (max-width: 600px) {
+            .registration-container {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="registration-container">
+        <h1> Registration Form</h1>
+        <form id="registrationForm">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" placeholder="Enter your name">
+                <span id="nameError" class="error-message">Please enter your name</span>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" placeholder="Enter your email">
+                <span id="emailError" class="error-message">Please enter a valid email</span>
+            </div>
+            <div class="form-group password-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" placeholder="Enter your password">
+                <i class="fa fa-eye" id="togglePassword"></i>
+                <span id="passwordError" class="error-message">Password must be at least 6 characters long</span>
+            </div>
+            <div class="submit-group">
+                <button type="submit" id="submitBtn">Submit</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('registrationForm');
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const nameError = document.getElementById('nameError');
+            const emailError = document.getElementById('emailError');
+            const passwordError = document.getElementById('passwordError');
+            const submitBtn = document.getElementById('submitBtn');
+            const togglePassword = document.getElementById('togglePassword');
+
+            function validateForm() {
+                let isValid = true;
+
+                // Validate Name
+                if (nameInput.value.trim() === "") {
+                    nameError.style.display = 'block';
+                    isValid = false;
+                } else {
+                    nameError.style.display = 'none';
+                }
+
+                // Validate Email
+                if (emailInput.value.trim() === "" || !validateEmail(emailInput.value)) {
+                    emailError.style.display = 'block';
+                    isValid = false;
+                } else {
+                    emailError.style.display = 'none';
+                }
+
+                // Validate Password
+                if (passwordInput.value.length < 6) {
+                    passwordError.style.display = 'block';
+                    isValid = false;
+                } else {
+                    passwordError.style.display = 'none';
+                }
+
+                // Enable or disable submit button
+                submitBtn.classList.toggle('enabled', isValid);
+
+                return isValid;
+            }
+
+            form.addEventListener('input', validateForm);
+
+            form.addEventListener('submit', (event) => {
+                if (!validateForm()) {
+                    event.preventDefault();
+                    alert('Please correct the errors in the form.');
+                } else {
+                    alert('Form submitted successfully!');
+                }
+            });
+
+            // Toggle password visibility
+            togglePassword.addEventListener('click', () => {
+                const type = passwordInput.type === 'password' ? 'text' : 'password';
+                passwordInput.type = type;
+                togglePassword.classList.toggle('fa-eye-slash');
+            });
+
+            // Validate Email format
+            function validateEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            }
+        });
+    </script>
+</body>
+</html>
